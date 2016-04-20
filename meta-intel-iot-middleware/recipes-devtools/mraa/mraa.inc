@@ -11,6 +11,12 @@ inherit distutils-base pkgconfig python-dir cmake
 
 PACKAGES =+ "python-${PN} node-${PN} ${PN}-java"
 
+PACKAGECONFIG ??= "python nodejs java"
+PACKAGECONFIG[python] = "-DBUILDSWIGPYTHON=ON, -DBUILDSWIGPYTHON=OFF, swig-native python,"
+PACKAGECONFIG[nodejs] = "-DBUILDSWIGNODE=ON, -DBUILDSWIGNODE=OFF, swig-native nodejs,"
+PACKAGECONFIG[java] = "-DBUILDSWIGJAVA=ON, -DBUILDSWIGJAVA=OFF, swig-native icedtea7-native,"
+
+
 # python-mraa package containing Python bindings
 FILES_python-${PN} = "${PYTHON_SITEPACKAGES_DIR}/ \
                       ${datadir}/mraa/examples/python/ \
@@ -28,25 +34,18 @@ INSANE_SKIP_node-${PN} = "debug-files"
 
 # mraa-java package containing Java bindings
 FILES_${PN}-java = "${libdir}/libmraajava.so \
-                    ${libdir}/java/ \
                     ${datadir}/mraa/examples/java/ \
                     ${libdir}/pkgconfig/mraajava.pc \
                     ${prefix}/src/debug/${BPN}/${PV}-${PR}/build/src/java/ \
                     ${libdir}/.debug/libmraajava.so \
                    "
-# include .jar files in /usr/lib/java for 64 bit builds
-FILES_${PN}-java_append = "${@' ${libdir}/../lib/java' if '${TARGET_ARCH}' == 'x86_64' else ''}"
+#                     ${libdir}/java/
 
 RDEPENDS_${PN}-java += "java-runtime"
 INSANE_SKIP_${PN}-java = "debug-files"
 
 
 FILES_${PN}-doc += "${datadir}/mraa/examples/"
-
-PACKAGECONFIG ??= "python nodejs java"
-PACKAGECONFIG[python] = "-DBUILDSWIGPYTHON=ON, -DBUILDSWIGPYTHON=OFF, swig-native python,"
-PACKAGECONFIG[nodejs] = "-DBUILDSWIGNODE=ON, -DBUILDSWIGNODE=OFF, swig-native nodejs,"
-PACKAGECONFIG[java] = "-DBUILDSWIGJAVA=ON, -DBUILDSWIGJAVA=OFF, swig-native icedtea7-native,"
 
 EXTRA_OECMAKE_append = "-DINSTALLGPIOTOOL=ON"
 
@@ -68,3 +67,4 @@ do_compile_prepend () {
   # trick
   sed -i 's/-dirty//' src/version.c
 }
+

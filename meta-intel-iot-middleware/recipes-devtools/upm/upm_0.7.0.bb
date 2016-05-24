@@ -5,21 +5,21 @@ AUTHOR = "Brendan Le Foll, Tom Ingleby, Yevgeniy Kiveisha"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=d1cc191275d6a8c5ce039c75b2b3dc29"
 
-DEPENDS = "nodejs swig-native mraa"
+DEPENDS = "nodejs swig-native mraa cmake"
 
-SRC_URI = "git://github.com/intel-iot-devkit/upm.git;protocol=git;tag=v${PV}"
+SRC_URI = "git://github.com/intel-iot-devkit/upm.git;protocol=git;tag=v${PV} \
+           file://0001-cmake-use-list-to-modify-lists.patch \
+          "
 
 S = "${WORKDIR}/git"
 
 inherit distutils-base pkgconfig python-dir cmake
 
-CFLAGS_append_edison = " -msse3 -mfpmath=sse"
-
 FILES_${PN}-doc += " ${datadir}/upm/examples/"
 RDEPENDS_${PN} += " mraa"
 
 PACKAGECONFIG ??= "python nodejs java"
-PACKAGECONFIG[python] = "-DBUILDSWIGPYTHON=ON, -DBUILDSWIGPYTHON=OFF, swig-native ${PYTHON_PN},"
+PACKAGECONFIG[python] = "-DBUILDSWIGPYTHON=OFF, -DBUILDSWIGPYTHON=OFF, swig-native python,"
 PACKAGECONFIG[nodejs] = "-DBUILDSWIGNODE=ON, -DBUILDSWIGNODE=OFF, swig-native nodejs,"
 PACKAGECONFIG[java] = "-DBUILDSWIGJAVA=ON, -DBUILDSWIGJAVA=OFF, swig-native openjdk-8-native,"
 
@@ -30,12 +30,12 @@ PACKAGECONFIG[java] = "-DBUILDSWIGJAVA=ON, -DBUILDSWIGJAVA=OFF, swig-native open
 # Possible values for PYTHON_PN: "python" or "python3"
 
 # python-upm package containing Python bindings
-FILES_${PYTHON_PN}-${PN} = "${PYTHON_SITEPACKAGES_DIR} \
+FILES_python-${PN} = "${PYTHON_SITEPACKAGES_DIR} \
                        ${datadir}/${BPN}/examples/python/ \
                        ${prefix}/src/debug/${BPN}/${PV}-${PR}/build/src/*/pyupm_* \
                       "
-RDEPENDS_${PYTHON_PN}-${PN} += "${PYTHON_PN} mraa"
-INSANE_SKIP_${PYTHON_PN}-${PN} = "debug-files"
+RDEPENDS_python-${PN} += "python mraa"
+INSANE_SKIP_python-${PN} = "debug-files"
 
 
 ### Node ###
@@ -75,5 +75,5 @@ set (JAVA_JVM_LIBRARY ${JAVA_HOME}/jre/lib/amd64/libjvm.so CACHE FILEPATH \"path
 
 ### Include language bindings ###
 
-PACKAGES =+ "${PYTHON_PN}-${PN} node-${PN} ${PN}-java"
+PACKAGES =+ "python-${PN} node-${PN} ${PN}-java"
 

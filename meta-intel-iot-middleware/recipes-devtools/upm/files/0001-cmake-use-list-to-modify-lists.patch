@@ -1,4 +1,4 @@
-From 41e40bc53b4c9f9257844b40745c3fea63de1446 Mon Sep 17 00:00:00 2001
+From 6c7d1e33c0ce2ca0d1d2ec06aeead35d253d1355 Mon Sep 17 00:00:00 2001
 From: Kevron Rees <tripzero.kev@gmail.com>
 Date: Tue, 24 May 2016 10:33:40 -0700
 Subject: [PATCH] [cmake] use list() to modify lists
@@ -23,7 +23,7 @@ index 283d5a7..8a90ac5 100644
  # Set CMAKE_INSTALL_LIBDIR if not defined
  include(GNUInstallDirs)
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index 117f25d..4dd14ac 100644
+index 117f25d..6235350 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
 @@ -42,6 +42,12 @@ macro(upm_SWIG_PYTHON)
@@ -33,7 +33,7 @@ index 117f25d..4dd14ac 100644
 +
 +    add_custom_target( FinalMessage_${libname} ALL
 +      ${CMAKE_COMMAND} -E cmake_echo_color --cyan "python libdir: ${PYTHON_LIBRARIES}"
-+      COMMENT "python version: ${PYTHONBUILD_VERSION}"
++      COMMENT "cmake find root path: ${CMAKE_FIND_ROOT_PATH}"
 +    )
 +
      install (FILES ${CMAKE_CURRENT_BINARY_DIR}/_pyupm_${libname}.so
@@ -44,7 +44,7 @@ index 117f25d..4dd14ac 100644
    if (BUILDSWIGPYTHON)
      if(NOT PYTHONLIBS_FOUND)
 -      find_package (PythonLibs ${PYTHONBUILD_VERSION} REQUIRED)
-+      find_package (PythonLibs ${PYTHONBUILD_VERSION} EXACT REQUIRED)
++      find_package (PythonLibs 2.7 REQUIRED)
        string (REPLACE "." ";" PYTHON_VERSION_LIST ${PYTHONLIBS_VERSION_STRING})
        list (GET PYTHON_VERSION_LIST 0 PYTHON_VERSION_MAJOR)
        list (GET PYTHON_VERSION_LIST 1 PYTHON_VERSION_MINOR)
